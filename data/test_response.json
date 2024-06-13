@@ -1,0 +1,92 @@
+{
+    "location": {
+        "address": [
+            "Manhatten, Florida, United States"
+        ],
+        "adminDistrict": [
+            "Florida"
+        ],
+        "adminDistrictCode": [
+            "FL"
+        ],
+        "city": [
+            "Astor"
+        ],
+        "country": [
+            "United States"
+        ],
+        "countryCode": [
+            "US"
+        ],
+        "displayName": [
+            "Manhatten"
+        ],
+        "displayContext": [
+            "Astor, United States"
+        ],
+        "ianaTimeZone": [
+            "America/New_York"
+        ],
+        "latitude": [
+            29.139
+        ],
+        "locale": [
+            {
+                "locale1": "Lake County",
+                "locale2": "Astor",
+                "locale3": "Manhatten",
+                "locale4": null
+            }
+        ],
+        "longitude": [
+            -81.516
+        ],
+        "neighborhood": [
+            null
+        ],
+        "placeId": [
+            "46a3eae0e75cf5cf212c6362d55459051b62d4a3276a08e00a05e559ba722bb2"
+        ],
+        "postalCode": [
+            "32102"
+        ],
+        "postalKey": [
+            "32102:US"
+        ],
+        "disputedArea": [
+            false
+        ],
+        "disputedCountries": [
+            null
+        ],
+        "disputedCountryCodes": [
+            null
+        ],
+        "disputedCustomers": [
+            null
+        ],
+        "disputedShowCountry": [
+            [
+                false
+            ]
+        ],
+        "iataCode": [
+            "SFB"
+        ],
+        "icaoCode": [
+            "KSFB"
+        ],
+        "locId": [
+            "USFL0018:1:US"
+        ],
+        "locationCategory": [
+            null
+        ],
+        "pwsId": [
+            "KFLASTOR13"
+        ],
+        "type": [
+            "locality"
+        ]
+    }
+}
