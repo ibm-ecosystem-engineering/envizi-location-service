@@ -35,7 +35,17 @@ OUTPUT_FOLDER = "output"
 WRITE_INTERIM_FILES=TRUE
 ```
 
-### 3  Run the app
+### 3  Install python modules
+
+1. Run the below command to create virutal environment and instal the required python modules.
+```
+python -m venv myvenv
+source myvenv/bin/activate
+
+python -m pip install -r requirements.txt
+```
+
+### 4  Run the app
 
 1. Runs the below command to start the app. (using the given sample file)
 
@@ -43,11 +53,11 @@ WRITE_INTERIM_FILES=TRUE
 python main.py ./data/Envizi_SetupConfig_1_INBank.xlsx
 ```
 
-### 4  Result
+### 5  Result
 
 The generated file should be available under the `output` folder with the timesamp.
 
 Ex:
 ```
-/output/results-2024-06-13-213435-730476/Envizi_SetupConfig_1_INBank_result
+/output/results-2024-06-13-213435-730476/Envizi_SetupConfig_1_INBank_result.xlsx
 ```

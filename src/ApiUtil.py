@@ -23,7 +23,7 @@ class ApiUtil:
 
     @staticmethod
     def callAPI(api_url):
-        ApiUtil.logger.debug(f"----------------------------callAPI : ---------------------------- ")
+        ApiUtil.logger.info(f"----------------------------callAPI : ---------------------------- ")
         ApiUtil.logger.debug(f" url : {api_url}")
 
         myheaders = {   
