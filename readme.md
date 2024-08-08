@@ -12,17 +12,15 @@ Python should be available.
 
 ### 1 Download the repo
 
-1. Download this repo 
-
-2. Goto to the root folder of the repo.
-
-3. Do the following steps. 
+1. Download this repo
 
 ### 2 Create .env file
 
-1. Create `.env` file with the below entries. 
+1. Goto to the root folder of the repo.
 
-2. Update all the properties accordingly.
+2. Create `.env` file with the below entries. 
+
+3. Update all the properties accordingly.
 
 ```
 # Environment variables
