@@ -145,7 +145,7 @@ class LocationService :
         try:
             excel_writer = pd.ExcelWriter(file_name, engine='openpyxl')
             df.to_excel(excel_writer, sheet_name=sheet_name, index=False)
-            excel_writer.save()
+            excel_writer.close()
             self.logger.info(f"The output file is created and available as : {file_name} ")
         except FileNotFoundError:
             print(f"Error: The file '{file_name}' does not exist.")
