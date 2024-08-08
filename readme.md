@@ -39,8 +39,8 @@ WRITE_INTERIM_FILES=TRUE
 
 1. Run the below command to create virutal environment and instal the required python modules.
 ```
-python -m venv myvenv
-source myvenv/bin/activate
+python -m venv myvenv-location-service
+source myvenv-location-service/bin/activate
 
 python -m pip install -r requirements.txt
 ```
