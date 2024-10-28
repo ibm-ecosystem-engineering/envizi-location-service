@@ -1,45 +1,75 @@
-import pandas as pd
 
-from datetime import datetime, timedelta
-import pandas as pd
+from flask import Flask, request, jsonify, render_template, send_file
 import logging
 import os
-import re
-import numpy as np
-import shutil
-
-import sys
-
 from src.LocationService import LocationService
 from dotenv import load_dotenv
+import pandas as pd
+
+# Initialize Flask app
+app = Flask(__name__, static_folder='static')
+
+# Load environment variables
+load_dotenv()
 
 #### Logging Configuration
 logging.basicConfig(
     format='%(asctime)s - %(levelname)s:%(message)s',
     handlers=[
-        logging.StreamHandler(), #print to console
+        logging.StreamHandler(),  # print to console
     ],
     level=logging.INFO
 )
 
+@app.route('/')
+def index():
+    print("main home page")
+    return render_template('index.html')
 
-def execute_main() :
-    print (" Processing Started " )
-    load_dotenv()
 
-    file_name = ""
-    if len(sys.argv) > 1:
-        file_name = sys.argv[1]
-        print(f"File name : {file_name} ")
+@app.route('/index', methods=['POST'])
+def execute_main():
+    print("Processing Started")
+    
+    # Check if a file was uploaded
+    if 'uploadFile' not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
 
-        locationService = LocationService()
-        locationService.process_main(file_name)
+    # Get the uploaded file
+    file = request.files['uploadFile']
+    
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    # Save the uploaded file to the 'data' folder
+    file_path = os.path.join('data', file.filename)
+    file.save(file_path)
+
+    print(f"File saved to: {file_path}")
+
+    # Process the file (using LocationService)
+    locationService = LocationService()
+    output_file = locationService.process_main(file_path)
+    print("returned from location service process_main function = ",output_file)
+
+    print("Processing Completed")
+
+    df = pd.read_excel(output_file)
+    table_data = df.to_html()
+    
+    return {"message": "Processing Completed","file_name":output_file,"data1":table_data}
+
+
+@app.route('/download', methods=['GET'])
+def download_file():
+    # Get the file path from query parameters
+    file_path = request.args.get('file_path')
+    
+    if file_path:
+        # Serve the file for download
+        return send_file(file_path, as_attachment=True)
     else:
-        print("File name not given.....")
+        return "No file specified", 400
 
-    print (" Processing Completed " )
-
-if __name__ == "__main__":
-    execute_main()
-
-
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001, debug=True)
