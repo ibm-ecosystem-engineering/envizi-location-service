@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and Download</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>Envizi Location Service</h1>
+        </div>
+        <div class="sub-header"> 
+            <h2>Location service helps to capture ….</h2>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Upload your data </h1>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <form id="upload" action="{{ url_for('execute_main') }}" method="POST" enctype="multipart/form-data">
+                <label for="fileUpload" class="btn-primary">Upload File:</label>
+                <input type="file" id="fileUpload" name="uploadFile" required>
+                <button type="submit" class="btn-primary">Submit</button>
+            </form>
+        </div>
+
+        <!-- Result Section -->
+        <div class="generated-data-section">
+            <h1>Generated data </h1>
+            <a id="downloadLink" href="#" download>
+                <button id="downloadButton" disabled class="btn-primary">Download File</button>
+            </a>
+        </div>
+        <div id="result" class="result-section">
+            <p>Generated Data : </p>
+            {{ data1|safe }}
+        </div>
+        
+        <!-- <h1>Download your generated data </h1> -->
+        <!-- Download Section -->
+        <!-- <div class="download-section">
+            <a id="downloadLink" href="#" download>
+                <button id="downloadButton" disabled class="btn-primary">Download File</button>
+            </a>
+        </div> -->
+
+       
+    </div>
+
+    <script>
+        // Get the form element
+        const form = document.getElementById('upload');
+        const fileInput = document.getElementById('fileUpload');
+        const resultDiv = document.getElementById('result');
+        const downloadLink = document.getElementById('downloadLink');
+        const downloadButton = document.getElementById('downloadButton');
+
+        // Auto-submit the form when a file is selected
+        fileInput.addEventListener('change', function () {
+            const formData = new FormData(form);
+
+            // Send the form data using Fetch API
+            fetch("{{ url_for('execute_main') }}", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())  // Assuming the response is JSON
+                .then(data => {
+                    // Display the message in the result div
+                    resultDiv.innerHTML = `<p>Server Response: ${data.message}</p>`;
+                    resultDiv.innerHTML = `<p>Server Response: ${data.file_name}</p>`;
+                    resultDiv.innerHTML = `<p> ${data.data1}</p>`;
+
+                    // Update the download link with the file path
+                    const filePath = data.file_name;
+                    downloadLink.href = `/download?file_path=${encodeURIComponent(filePath)}`;
+
+                    // Enable the download button
+                    downloadButton.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = `<p style="color: red;">Error occurred while uploading file.</p>`;
+                });
+        });
+    </script>
+
+</body>
+
+</html>
