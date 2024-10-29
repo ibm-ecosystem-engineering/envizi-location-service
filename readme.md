@@ -1,26 +1,52 @@
 # Envizi Location Service
 
-Helps to fill in the `LATITUDE Y` and `LONGITUDE X` columns of the Envizi Setup Config template.
+This tool enables automatic filling of the`LATITUDE Y` and `LONGITUDE X` columns in the Envizi Setup Config template, using the address details provided in the template.
 
-## How to run the application
+Lets us look at how to install this application and run it.
 
-To run the application follow the below steps. 
+## Prerequisite
 
-### Prerequisite
+Python should be installed and available.
 
-Python should be available.
+## 1. Installation
 
-### 1 Download the repo
+#### 1.1 Download this repo
 
-1. Download this repo
+1. Download this repo (https://github.com/ibm-ecosystem-engineering/envizi-location-service). 
 
-### 2 Create .env file
+2. Let's assume the repository has been downloaded, and available in the locatioon `/Users/xyz/envizi-location-service`.
 
-1. Goto to the root folder of the repo.
+    Lets call this as a root folder.
 
-2. Create `.env` file with the below entries. 
+    Don't forget to replace the `/Users/xyz/envizi-location-service` with your folder structure, whereever we refer in this document.
 
-3. Update all the properties accordingly.
+#### 1.2 Create Python virtual environment
+
+1. Open a new command or terminal window.
+
+2. Goto the repository root folder by running the below command.
+
+    **Note:** Don't forget to replace the `/Users/xyz/envizi-location-service` with your folder structure.
+
+    ```
+    cd /Users/xyz/envizi-location-service
+    ```
+
+3. Create python `virtual environment` by running the below command.
+
+    ```
+    python -m venv myvenv-location-svc
+    source myvenv-location-svc/bin/activate
+    ```
+
+4. Install the required python packages by running the below command.
+    ```
+    python -m pip install -r requirements.txt
+    ```
+
+#### 1.3 Create .env file
+
+1. Create `.env` file with the below entries (you should be still in the root folder of the repo /Users/xyz/envizi-location-service)
 
 ```
 # Environment variables
@@ -33,43 +59,42 @@ OUTPUT_FOLDER = "output"
 WRITE_INTERIM_FILES=TRUE
 ```
 
-### 3  Install python modules
+2. Update the `LOCATION_API_URL` and `LOCATION_API_KEY` the properties accordingly.
 
-1. Run the below command to create virutal environment and instal the required python modules.
-```
-python -m venv myvenv-location-service
-source myvenv-location-service/bin/activate
+They are weather API URL and key.
 
-python -m pip install -r requirements.txt
-```
 
-### 4  Start the app
+#### 1.4 Start the Python app
 
-1. Runs the below command to start the app.
+1. Run the below commands to start the app
 
-```
-python main.py
-```
+    ```
+    python src/main.py
+ 
+    ```
 
-### 5  Run the app
+2. Verify the app is working by opening the url  http://localhost:5001 in your browser.
+
+
+## 2 Using the application
 
 1. Open the url http://localhost:5001/ in the browser
 
 2. Click on `Choose file` button to select your config connector template. 
 
-You can use the file - [data/Envizi_SetupConfig_6.pdf](../data/Envizi_SetupConfig_6.pdf)  
+You can use the file - [data/Envizi_SetupConfig_6.xlxs](../data/Envizi_SetupConfig_6.xlxs)  
 
 <img src="images/image11.png">
 
-3. The selected file might look like this: it includes some filled address-related fields, but the latitude and longitude fields are left blank
+3. The selected file might look like this: it includes some filled `address-related` fields, but the `latitude` and `longitude` fields are left blank
 
 <img src="images/image12.png">
 
-4. Click on `Upload` to send the selected file to the server for the processing.
+4. Click on `Upload` to send the selected file to the server for processing.
 
 <img src="images/image13.png">
 
-5. The file got processed the latitude and longitude fields are filled with the appropriate values based on the address-related fields.
+5. The file got processed and the `latitude` and `longitude` fields are filled with the appropriate values based on the `address-related` fields.
 
 6. Click on `Download file` button to download the processed excel file.
 
@@ -79,5 +104,4 @@ You can use the file - [data/Envizi_SetupConfig_6.pdf](../data/Envizi_SetupConfi
 
 <img src="images/image15.png">
 
-The sample file is available here - [data/Envizi_SetupConfig_6_result.pdf](../data/Envizi_SetupConfig_6_result.pdf)  
-
+The sample file is available here - [data/Envizi_SetupConfig_6_result.xlxs](../data/Envizi_SetupConfig_6_result.xlxs)  
