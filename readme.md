@@ -2,11 +2,11 @@
 
 This tool enables automatic filling of the`LATITUDE Y` and `LONGITUDE X` columns in the Envizi Setup Config template, using the address details provided in the template.
 
-Lets us look at how to install this application and run it.
+Let'ss us look at how to install this application and run it.
 
 ## Prerequisite
 
-Python should be installed and available.
+Python 3.x should be installed and available.
 
 ## 1. Installation
 
@@ -14,11 +14,11 @@ Python should be installed and available.
 
 1. Download this repo (https://github.com/ibm-ecosystem-engineering/envizi-location-service). 
 
-2. Let's assume the repository has been downloaded, and available in the locatioon `/Users/xyz/envizi-location-service`.
+2. Let's assume the repository has been downloaded, and available in the location `/Users/xyz/envizi-location-service`.
 
-    Lets call this as a root folder.
+    Let's call this as a root folder.
 
-    Don't forget to replace the `/Users/xyz/envizi-location-service` with your folder structure, whereever we refer in this document.
+    Don't forget to replace the `/Users/xyz/envizi-location-service` with your folder structure, wherever we refer in this document.
 
 #### 1.2 Create Python virtual environment
 
@@ -46,7 +46,7 @@ Python should be installed and available.
 
 #### 1.3 Create .env file
 
-1. Create `.env` file with the below entries (you should be still in the root folder of the repo /Users/xyz/envizi-location-service)
+1. Create `.env` file with the below entries (you should be still in the root folder of the repo /Users/xyz/envizi-location-service )
 
 ```
 # Environment variables
@@ -59,10 +59,9 @@ OUTPUT_FOLDER = "output"
 WRITE_INTERIM_FILES=TRUE
 ```
 
-2. Update the `LOCATION_API_URL` and `LOCATION_API_KEY` the properties accordingly.
+2. Update the `LOCATION_API_URL` and `LOCATION_API_KEY` properties with your data.
 
 They are weather API URL and key.
-
 
 #### 1.4 Start the Python app
 
@@ -82,26 +81,26 @@ They are weather API URL and key.
 
 2. Click on `Choose file` button to select your config connector template. 
 
-You can use the file - [data/Envizi_SetupConfig_6.xlxs](../data/Envizi_SetupConfig_6.xlxs)  
+    You can use the file - [data/Envizi_SetupConfig_6.xlsx](../data/Envizi_SetupConfig_6.xlsx)  
 
-<img src="images/image11.png">
+    <img src="images/image11.png">
 
 3. The selected file might look like this: it includes some filled `address-related` fields, but the `latitude` and `longitude` fields are left blank
 
-<img src="images/image12.png">
+    <img src="images/image12.png">
 
 4. Click on `Upload` to send the selected file to the server for processing.
 
-<img src="images/image13.png">
+    <img src="images/image13.png">
 
 5. The file got processed and the `latitude` and `longitude` fields are filled with the appropriate values based on the `address-related` fields.
 
 6. Click on `Download file` button to download the processed excel file.
 
-<img src="images/image14.png">
+    <img src="images/image14.png">
 
 7. You can see the downloaded file contains the latitude and longitude fields values.
 
-<img src="images/image15.png">
+    <img src="images/image15.png">
 
-The sample file is available here - [data/Envizi_SetupConfig_6_result.xlxs](../data/Envizi_SetupConfig_6_result.xlxs)  
+The sample file is available here - [data/Envizi_SetupConfig_6_result.xlsx](../data/Envizi_SetupConfig_6_result.xlsx)  
