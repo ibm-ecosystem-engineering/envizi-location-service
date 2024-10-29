@@ -26,6 +26,9 @@ def index():
     print("main home page")
     return render_template('index.html')
 
+@app.route('/hello')
+def hello():
+    return "hello", 200
 
 @app.route('/index', methods=['POST'])
 def execute_main():
