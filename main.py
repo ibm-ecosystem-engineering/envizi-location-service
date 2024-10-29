@@ -55,9 +55,11 @@ def execute_main():
     print("Processing Completed")
 
     df = pd.read_excel(output_file)
-    table_data = df.to_html()
+    table_data = df.to_html(index=False, na_rep='')
     
-    return {"message": "Processing Completed","file_name":output_file,"data1":table_data}
+    return {    "message": "Processing completed successfully",
+                "file_name":output_file,
+                "table_data":table_data}
 
 
 @app.route('/download', methods=['GET'])

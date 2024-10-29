@@ -1,68 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload and Download</title>
+    <title>File Upload and Data Display</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-
 <body>
-    <header class="header">
-        <div class="header-content">
-            <h1>Envizi Location Service</h1>
-        </div>
-        <div class="sub-header"> 
-            <h2>Location service helps to capture ….</h2>
-        </div>
+    <header>
+        <h1>IBM Envizi Location Service</h1>
     </header>
-    <div class="container">
-        <h1>Upload your data </h1>
 
-        <!-- Upload Section -->
-        <div class="upload-section">
-            <form id="upload" action="{{ url_for('execute_main') }}" method="POST" enctype="multipart/form-data">
-                <label for="fileUpload" class="btn-primary">Upload File:</label>
-                <input type="file" id="fileUpload" name="uploadFile" required>
-                <button type="submit" class="btn-primary">Submit</button>
-            </form>
-        </div>
+    <section class="intro">
+        <p>This tool enables automatic filling of the latitude and longitude (x and y) in the Envizi config connector, using the address details provided in the config connector..</p>
+    </section>
 
-        <!-- Result Section -->
-        <div class="generated-data-section">
-            <h1>Generated data </h1>
-            <a id="downloadLink" href="#" download>
-                <button id="downloadButton" disabled class="btn-primary">Download File</button>
-            </a>
-        </div>
-        <div id="result" class="result-section">
-            <p>Generated Data : </p>
-            {{ data1|safe }}
-        </div>
-        
-        <!-- <h1>Download your generated data </h1> -->
-        <!-- Download Section -->
-        <!-- <div class="download-section">
-            <a id="downloadLink" href="#" download>
-                <button id="downloadButton" disabled class="btn-primary">Download File</button>
-            </a>
-        </div> -->
+    <main>
+        <section class="content-section">
+            <div class="title-section">
+                <h3>Upload Config Connector</h3>
+                <p>Upload your Config Connector template data to findout the latitude and longitude.</p>
+            </div>
+            <div class="upload-section">
+                <form id="uploadForm" action="{{ url_for('execute_main') }}" method="POST" enctype="multipart/form-data">
+                    <label for="fileUpload" >Choose your file :</label>
+                    <input type="file" id="fileUpload" name="uploadFile" class="btn-fileupload" required>
+                    <button type="button" class="btn-primary" onclick="processFileUpload()">Upload</button>
+                </form>
+            </div>
+        </section>
 
-       
-    </div>
+        <section class="content-section">
+            <div class="title-section">
+                <h3>Result</h3>
+                <p>View and download the latitude and longitude filled data.</p>
+            </div>
+            <div class="result-section">
+                <a id="downloadLink" href="#" download>
+                    <button id="downloadButton" disabled class="btn-primary">Download file</button>
+                </a>
+
+                <div id="resultMessage" class="message-section">
+                    <!-- Data will be dynamically inserted here -->
+                </div>
+
+                <div id="resultData" class="data-section">
+                        <!-- Data will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
 
     <script>
         // Get the form element
-        const form = document.getElementById('upload');
+        const form = document.getElementById('uploadForm');
         const fileInput = document.getElementById('fileUpload');
-        const resultDiv = document.getElementById('result');
+        const resultMessageDiv = document.getElementById('resultMessage');
+        const resultDataDiv = document.getElementById('resultData');
+
         const downloadLink = document.getElementById('downloadLink');
         const downloadButton = document.getElementById('downloadButton');
 
         // Auto-submit the form when a file is selected
-        fileInput.addEventListener('change', function () {
+        function processFileUpload() {
             const formData = new FormData(form);
+
+            //Clear results
+            resultMessageDiv.innerHTML = "";
+            resultDataDiv.innerHTML = "";
 
             // Send the form data using Fetch API
             fetch("{{ url_for('execute_main') }}", {
@@ -71,25 +77,23 @@
             })
                 .then(response => response.json())  // Assuming the response is JSON
                 .then(data => {
-                    // Display the message in the result div
-                    resultDiv.innerHTML = `<p>Server Response: ${data.message}</p>`;
-                    resultDiv.innerHTML = `<p>Server Response: ${data.file_name}</p>`;
-                    resultDiv.innerHTML = `<p> ${data.data1}</p>`;
+
+                    // Display  results
+                    resultMessageDiv.innerHTML = `<p style="color: green;"">${data.message}</p>`;
+                    resultDataDiv.innerHTML = `${data.table_data}`;
 
                     // Update the download link with the file path
-                    const filePath = data.file_name;
-                    downloadLink.href = `/download?file_path=${encodeURIComponent(filePath)}`;
+                    downloadLink.href = `/download?file_path=${encodeURIComponent(data.file_name)}`;
 
                     // Enable the download button
                     downloadButton.disabled = false;
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    resultDiv.innerHTML = `<p style="color: red;">Error occurred while uploading file.</p>`;
+                    resultMessageDiv.innerHTML = `<p style="color: red;">Error occurred while uploading file.</p>`;
                 });
-        });
+            }
     </script>
-
 </body>
-
 </html>

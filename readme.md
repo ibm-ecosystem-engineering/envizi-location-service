@@ -43,19 +43,41 @@ source myvenv-location-service/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-### 4  Run the app
+### 4  Start the app
 
-1. Runs the below command to start the app. (using the given sample file)
+1. Runs the below command to start the app.
 
 ```
-python main.py ./data/Envizi_SetupConfig_1_INBank.xlsx
+python main.py
 ```
 
-### 5  Result
+### 5  Run the app
 
-The generated file should be available under the `output` folder with the timesamp.
+1. Open the url http://localhost:5001/ in the browser
 
-Ex:
-```
-/output/results-2024-06-13-213435-730476/Envizi_SetupConfig_1_INBank_result.xlsx
-```
+2. Click on `Choose file` button to select your config connector template. 
+
+You can use the file - [data/Envizi_SetupConfig_6.pdf](../data/Envizi_SetupConfig_6.pdf)  
+
+<img src="images/image11.png">
+
+3. The selected file might look like this: it includes some filled address-related fields, but the latitude and longitude fields are left blank
+
+<img src="images/image12.png">
+
+4. Click on `Upload` to send the selected file to the server for the processing.
+
+<img src="images/image13.png">
+
+5. The file got processed the latitude and longitude fields are filled with the appropriate values based on the address-related fields.
+
+6. Click on `Download file` button to download the processed excel file.
+
+<img src="images/image14.png">
+
+7. You can see the downloaded file contains the latitude and longitude fields values.
+
+<img src="images/image15.png">
+
+The sample file is available here - [data/Envizi_SetupConfig_6_result.pdf](../data/Envizi_SetupConfig_6_result.pdf)  
+
