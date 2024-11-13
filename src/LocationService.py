@@ -93,14 +93,35 @@ class LocationService :
         self.logger.debug(f"process_row  row : {row}")
 
         ### combine the address fields.
-        address_text = ""
+        address = ""
+        city = ""
+        state = ""
+        postalcode = ""
+        country = ""
         try :
             if template_type == TEMPLATE_1_SETUP_CONFIG :
-                address_text = self.check_and_append("", row['STREET ADDRESS'])
-                address_text = self.check_and_append(address_text, row['CITY'])
-                address_text = self.check_and_append(address_text, row['STATE PROVINCE'])
-                address_text = self.check_and_append(address_text, row['POSTAL CODE'])
-                address_text = self.check_and_append(address_text, row['COUNTRY'])
+                address = row['STREET ADDRESS']
+                city = row['CITY']
+                state = row['STATE PROVINCE']
+                postalcode = row['POSTAL CODE']
+                country = row['COUNTRY']
+            elif template_type == TEMPLATE_2_SETUP_LOCATION :
+                address = row['STREET ADDRESS']
+                city = row['ADDRESS']
+                state = row['STATE PROVINCE']
+                postalcode = row['POSTAL CODE']
+                country = row['COUNTRY']
+        except Exception as e:
+            self.logger.info(f"process_row  error occured... ", e)
+
+
+        try :
+            if template_type == TEMPLATE_1_SETUP_CONFIG :
+                address = self.check_and_append("", row['STREET ADDRESS'])
+                city = self.check_and_append(address_text, row['CITY'])
+                state = self.check_and_append(address_text, row['STATE PROVINCE'])
+                postalcode = self.check_and_append(address_text, row['POSTAL CODE'])
+                country = self.check_and_append(address_text, row['COUNTRY'])
             elif template_type == TEMPLATE_2_SETUP_LOCATION :
                 address_text = self.check_and_append("", row['STREET ADDRESS'])
                 address_text = self.check_and_append(address_text, row['ADDRESS'])
@@ -110,23 +131,35 @@ class LocationService :
         except Exception as e:
             self.logger.info(f"process_row  error occured... ", e)
 
-        ### frame the URL
-        url = f"{self.LOCATION_API_URL}?query={address_text}&locationType=address&language=en-US&format=json&apiKey={self.LOCATION_API_KEY}"
-        self.logger.info(f"----------------------------------------------------")
-        self.logger.info(f"process_row  URL : {url}")
-        self.logger.info(f"process_row  address_text : {address_text}")
 
-        ### Call the API
-        response = ApiUtil.callAPI(url)
-        self.fileUtil.writeInFileWithCounter("api_response.json", json.dumps(response))
+        ### Call the API - all
+        address_text = self.check_and_append("", address)
+        address_text = self.check_and_append(address_text, city)
+        address_text = self.check_and_append(address_text, state)
+        address_text = self.check_and_append(address_text, postalcode)
+        address_text = self.check_and_append(address_text, country)
+        result, latitude, longitude = self.callLocationAPI (address_text)
 
-        ### extract the longitude and latitude from API Response
-        latitude = DictionaryUtil.findValue(response, "location.latitude[0]")
-        longitude = DictionaryUtil.findValue(response, "location.longitude[0]")
+        if (result is False) :
+            address_text = self.check_and_append("", city)
+            address_text = self.check_and_append(address_text, state)
+            address_text = self.check_and_append(address_text, postalcode)
+            address_text = self.check_and_append(address_text, country)
+            result, latitude, longitude = self.callLocationAPI (address_text)
+            if (result is False) :
+                address_text = self.check_and_append("", state)
+                address_text = self.check_and_append(address_text, postalcode)
+                address_text = self.check_and_append(address_text, country)
+                result, latitude, longitude = self.callLocationAPI (address_text)
+                if (result is False) :
+                    address_text = self.check_and_append("", postalcode)
+                    address_text = self.check_and_append(address_text, country)
+                    result, latitude, longitude = self.callLocationAPI (address_text)
+                    if (result is False) :
+                        address_text = self.check_and_append("", country)
+                        result, latitude, longitude = self.callLocationAPI (address_text)                    
 
-        self.logger.info(f"process_row  latitude : {latitude}")
-        self.logger.info(f"process_row  longitude : {longitude}")
-        self.logger.debug(f"----------------------------------------------------")
+        self.logger.info(f"process_row  result : {result}")
 
         ### Update the excel row with the retrieved LATITUDE and LONGITUDE
         if template_type == TEMPLATE_1_SETUP_CONFIG :
@@ -138,6 +171,34 @@ class LocationService :
 
         self.logger.debug(f"process_row  completed ... ")
         return row
+
+    ### Call Weather API and return latitude and longitude
+    def callLocationAPI(self, address_text):
+        ### frame the URL
+        url = f"{self.LOCATION_API_URL}?query={address_text}&locationType=address&language=en-US&format=json&apiKey={self.LOCATION_API_KEY}"
+        self.logger.info(f"----------------------------------------------------")
+        self.logger.info(f"callLocationAPI  URL : {url}")
+        self.logger.info(f"callLocationAPI  address_text : {address_text}")
+
+        ### Call the API
+        response = ApiUtil.callAPI(url)
+        self.fileUtil.writeInFileWithCounter("api_response.json", json.dumps(response))
+
+        ### extract the longitude and latitude from API Response
+        latitude = DictionaryUtil.findValue(response, "location.latitude[0]")
+        longitude = DictionaryUtil.findValue(response, "location.longitude[0]")
+
+        self.logger.info(f"callLocationAPI  latitude : {latitude}")
+        self.logger.info(f"callLocationAPI  longitude : {longitude}")
+        self.logger.debug(f"----------------------------------------------------")
+
+        if latitude is None or longitude is None:
+            result = False
+        else:
+            result = True
+
+        return result, latitude, longitude  # Return three values
+
 
     ### Save Excel file
     def generateExcel(self, file_name, myData, sheet_name):
@@ -161,3 +222,4 @@ class LocationService :
             else:
                 result = input_string + "," + str(append_string)
         return result
+    
