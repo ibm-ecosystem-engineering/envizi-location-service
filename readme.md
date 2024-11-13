@@ -68,7 +68,7 @@ They are weather API URL and key.
 1. Run the below commands to start the app
 
     ```
-    python src/main.py
+    python main.py
  
     ```
 

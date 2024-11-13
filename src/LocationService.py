@@ -121,8 +121,8 @@ class LocationService :
         self.fileUtil.writeInFileWithCounter("api_response.json", json.dumps(response))
 
         ### extract the longitude and latitude from API Response
-        latitude = DictionaryUtil.findValue(response, "location.latitude[1]")
-        longitude = DictionaryUtil.findValue(response, "location.longitude[1]")
+        latitude = DictionaryUtil.findValue(response, "location.latitude[0]")
+        longitude = DictionaryUtil.findValue(response, "location.longitude[0]")
 
         self.logger.info(f"process_row  latitude : {latitude}")
         self.logger.info(f"process_row  longitude : {longitude}")
