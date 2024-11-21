@@ -3,11 +3,16 @@ from flask import Flask, request, jsonify, render_template, send_file
 import logging
 import os
 from src.LocationService import LocationService
+from src.LoginService import LoginService
+
 from dotenv import load_dotenv
 import pandas as pd
 
+from flask_httpauth import HTTPBasicAuth
+
 # Initialize Flask app
 app = Flask(__name__, static_folder='static')
+auth = HTTPBasicAuth()
 
 # Load environment variables
 load_dotenv()
@@ -18,22 +23,33 @@ logging.basicConfig(
     handlers=[
         logging.StreamHandler(),  # print to console
     ],
-    level=logging.INFO
 )
 
+logger = logging.getLogger(__name__)
+logger.setLevel(os.environ.get('LOGLEVEL', 'INFO').upper())
+
+@auth.verify_password
+def verify_password(username, password):
+    loginService = LoginService()
+    result = loginService.verifyLogin(username, password)        
+    return result
+
+
 @app.route('/')
+@auth.login_required
 def index():
-    print("main home page")
+    logger.info("main home page")
     return render_template('index.html')
 
 @app.route('/hello')
+@auth.login_required
 def hello():
     return "hello", 200
 
 @app.route('/index', methods=['POST'])
 def execute_main():
-    print("Processing Started")
-    
+    logger.info("Processing Started")
+
     # Check if a file was uploaded
     if 'uploadFile' not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
@@ -48,14 +64,14 @@ def execute_main():
     file_path = os.path.join('data', file.filename)
     file.save(file_path)
 
-    print(f"File saved to: {file_path}")
+    logger.info(f"File saved to: {file_path}")
 
     # Process the file (using LocationService)
     locationService = LocationService()
     output_file = locationService.process_main(file_path)
-    print("returned from location service process_main function = ",output_file)
+    logger.info(f"Output file = {output_file} ")
 
-    print("Processing Completed")
+    logger.info("Processing Completed")
 
     df = pd.read_excel(output_file)
     table_data = df.to_html(index=False, na_rep='')
@@ -77,4 +93,4 @@ def download_file():
         return "No file specified", 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=3001, debug=False)

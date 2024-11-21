@@ -12,6 +12,6 @@ ENV OUTPUT_FOLDER  /app/output
 ENV WRITE_INTERIM_FILES  FALSE
 ENV FLASK_ENV production
 
-EXPOSE 5001
+EXPOSE 3001
 
 CMD ["python", "-u", "main.py"]

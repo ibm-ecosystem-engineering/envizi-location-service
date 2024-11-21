@@ -28,7 +28,7 @@ class LocationService :
 
     def process_main(self, input_file):
         self.logger.info(f"==================================================================================================================================")
-        self.logger.info(f"process_main  stated ... ")
+        self.logger.info(f"process_main  started ... ")
 
         ### Copy the source file
         self.fileUtil.copy_file(input_file)
@@ -66,7 +66,7 @@ class LocationService :
         return ouput_file
 
     def process_excel(self, input_file, ouput_file, template_type, sheet_name):
-        self.logger.info(f"process_excel  stated ... ")
+        self.logger.debug(f"process_excel : started ... ")
         try:
             # Read the Excel file
             df = pd.read_excel(input_file)
@@ -81,16 +81,16 @@ class LocationService :
             self.generateExcel(ouput_file, processed_data, sheet_name)
 
         except FileNotFoundError:
-            print(f"process_excel : Error: The file '{input_file}' does not exist.")
+            self.logger(f"process_excel : Error: The file '{input_file}' does not exist.")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            self.logger(f"process_excel : An error occurred: {e}")
 
-        self.logger.info(f"process_excel  Completed ... ")
+        self.logger.debug(f"process_excel  Completed ... ")
 
     ### Process each row of the excel
     def process_row(self, row, template_type):
-        self.logger.debug(f"process_row  stated ... ")
-        self.logger.debug(f"process_row  row : {row}")
+        self.logger.debug(f"process_row : stated ... ")
+        self.logger.debug(f"process_row : row : {row}")
 
         ### combine the address fields.
         address = ""
@@ -112,27 +112,9 @@ class LocationService :
                 postalcode = row['POSTAL CODE']
                 country = row['COUNTRY']
         except Exception as e:
-            self.logger.info(f"process_row  error occured... ", e)
+            self.logger.error(f"process_row  error occured... ", e, row)
 
-
-        try :
-            if template_type == TEMPLATE_1_SETUP_CONFIG :
-                address = self.check_and_append("", row['STREET ADDRESS'])
-                city = self.check_and_append(address_text, row['CITY'])
-                state = self.check_and_append(address_text, row['STATE PROVINCE'])
-                postalcode = self.check_and_append(address_text, row['POSTAL CODE'])
-                country = self.check_and_append(address_text, row['COUNTRY'])
-            elif template_type == TEMPLATE_2_SETUP_LOCATION :
-                address_text = self.check_and_append("", row['STREET ADDRESS'])
-                address_text = self.check_and_append(address_text, row['ADDRESS'])
-                address_text = self.check_and_append(address_text, row['STATE PROVINCE'])
-                address_text = self.check_and_append(address_text, row['POSTAL CODE'])
-                address_text = self.check_and_append(address_text, row['COUNTRY'])
-        except Exception as e:
-            self.logger.info(f"process_row  error occured... ", e)
-
-
-        ### Call the API - all
+        ### all fields
         address_text = self.check_and_append("", address)
         address_text = self.check_and_append(address_text, city)
         address_text = self.check_and_append(address_text, state)
@@ -141,25 +123,29 @@ class LocationService :
         result, latitude, longitude = self.callLocationAPI (address_text)
 
         if (result is False) :
+            ### fields  except address
             address_text = self.check_and_append("", city)
             address_text = self.check_and_append(address_text, state)
             address_text = self.check_and_append(address_text, postalcode)
             address_text = self.check_and_append(address_text, country)
             result, latitude, longitude = self.callLocationAPI (address_text)
             if (result is False) :
+                ### fields  except address, city
                 address_text = self.check_and_append("", state)
                 address_text = self.check_and_append(address_text, postalcode)
                 address_text = self.check_and_append(address_text, country)
                 result, latitude, longitude = self.callLocationAPI (address_text)
                 if (result is False) :
+                    ### fields  except address, city, state
                     address_text = self.check_and_append("", postalcode)
                     address_text = self.check_and_append(address_text, country)
                     result, latitude, longitude = self.callLocationAPI (address_text)
                     if (result is False) :
+                        ### fields  except address, city, state, postalcode
                         address_text = self.check_and_append("", country)
                         result, latitude, longitude = self.callLocationAPI (address_text)                    
 
-        self.logger.info(f"process_row  result : {result}")
+        self.logger.debug(f"process_row : result : {result}")
 
         ### Update the excel row with the retrieved LATITUDE and LONGITUDE
         if template_type == TEMPLATE_1_SETUP_CONFIG :
@@ -178,7 +164,6 @@ class LocationService :
         url = f"{self.LOCATION_API_URL}?query={address_text}&locationType=address&language=en-US&format=json&apiKey={self.LOCATION_API_KEY}"
         self.logger.info(f"----------------------------------------------------")
         self.logger.info(f"callLocationAPI  URL : {url}")
-        self.logger.info(f"callLocationAPI  address_text : {address_text}")
 
         ### Call the API
         response = ApiUtil.callAPI(url)
@@ -188,9 +173,7 @@ class LocationService :
         latitude = DictionaryUtil.findValue(response, "location.latitude[0]")
         longitude = DictionaryUtil.findValue(response, "location.longitude[0]")
 
-        self.logger.info(f"callLocationAPI  latitude : {latitude}")
-        self.logger.info(f"callLocationAPI  longitude : {longitude}")
-        self.logger.debug(f"----------------------------------------------------")
+        self.logger.info(f"callLocationAPI  latitude : {latitude}  , longitude : {longitude}")
 
         if latitude is None or longitude is None:
             result = False
@@ -202,6 +185,7 @@ class LocationService :
 
     ### Save Excel file
     def generateExcel(self, file_name, myData, sheet_name):
+        self.logger.info(f"----------------------------------------------------")
         df = pd.DataFrame(myData)
         try:
             excel_writer = pd.ExcelWriter(file_name, engine='openpyxl')
@@ -209,9 +193,10 @@ class LocationService :
             excel_writer.close()
             self.logger.info(f"The output file is created and available as : {file_name} ")
         except FileNotFoundError:
-            print(f"Error: The file '{file_name}' does not exist.")
+            self.logger.error(f"generateExcel Error: The file '{file_name}' does not exist.")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            self.logger.error(f"generateExcel An error occurred: {e}")
+        self.logger.info(f"----------------------------------------------------")
 
     ### Make a comma separated text for combining the address fields
     def check_and_append(self, input_string, append_string):
@@ -222,4 +207,3 @@ class LocationService :
             else:
                 result = input_string + "," + str(append_string)
         return result
-    

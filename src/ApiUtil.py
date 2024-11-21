@@ -23,8 +23,8 @@ class ApiUtil:
 
     @staticmethod
     def callAPI(api_url):
-        ApiUtil.logger.info(f"----------------------------callAPI : ---------------------------- ")
-        ApiUtil.logger.debug(f" url : {api_url}")
+        ApiUtil.logger.debug(f" ----------------------------callAPI : ---------------------------- ")
+        ApiUtil.logger.debug(f" API URL : {api_url}")
 
         myheaders = {   
             "accept" : "application/json",
@@ -34,6 +34,6 @@ class ApiUtil:
         response = requests.get(api_url, headers=myheaders, verify=False, stream=True)
         resp = ApiUtil._processApiResponse( response)
 
-        ApiUtil.logger.debug(f"---------------------------- Response : " +  json.dumps(resp))
-        ApiUtil.logger.debug(f"----------------------------  ---------------------------- ")
+        ApiUtil.logger.debug(f" API Response : " +  json.dumps(resp))
+        ApiUtil.logger.debug(f" ----------------------------  ---------------------------- ")
         return resp

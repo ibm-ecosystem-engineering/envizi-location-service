@@ -52,12 +52,16 @@ Python 3.x should be installed and available.
 # Environment variables
 LOGLEVEL = INFO
 
+USERS_INFO = ###user1=pass1###user2=pass2######user3=pass3###
+
 LOCATION_API_URL = "https://api.weather.com/v3/location/search"
 LOCATION_API_KEY = ""
 
 OUTPUT_FOLDER = "output"
 WRITE_INTERIM_FILES=TRUE
 ```
+
+Here the `USERS_INFO` contains the list of users who can access the application. You can define your own users and thier passwords.
 
 2. Update the `LOCATION_API_URL` and `LOCATION_API_KEY` properties with your data.
 
@@ -69,15 +73,15 @@ They are weather API URL and key.
 
     ```
     python main.py
- 
     ```
 
-2. Verify the app is working by opening the url  http://localhost:5001 in your browser.
+2. Verify the app is working by opening the url  http://localhost:3001 in your browser.
 
+3. It should show the login popup. If you have not changed the value of the `USERS_INFO` property then user is  `user1` and password is  `pass1`.
 
 ## 2 Using the application
 
-1. Open the url http://localhost:5001/ in the browser
+1. Open the url http://localhost:3001/ in the browser
 
 2. Click on `Choose file` button to select your config connector template. 
 
